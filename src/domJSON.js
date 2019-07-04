@@ -517,7 +517,7 @@
 	 * @private
 	 * @ignore
 	*/
-	var toJSON = function(node, opts, depth) {
+	var toJSON = function(node, opts, depth, siblingIndex) {
 		var style, kids, kidCount, thisChild, children, copy = copyJSON(node, opts);
 
 		//Per default, some tags are not allowed
@@ -541,7 +541,9 @@
 		if (opts.computedStyle && (style = styleJSON(node, opts))) {
 			copy.style = style;
 		}
-		
+		if (typeof siblingIndex === 'number'){
+			copy.siblingIndex = siblingIndex;
+		}
 		//Should we continue iterating?
 		if (opts.deep === true || (typeof opts.deep === 'number' && opts.deep > depth)) {
 			//We should!
@@ -549,7 +551,7 @@
 			kids = (opts.htmlOnly) ? node.children : node.childNodes;
 			kidCount = kids.length;
 			for (var c = 0; c < kidCount; c++) {
-				thisChild = toJSON(kids[c], opts, depth + 1);
+				thisChild = toJSON(kids[c], opts, depth + 1, c);
 				if (thisChild) {
 					children.push(thisChild);
 				}
